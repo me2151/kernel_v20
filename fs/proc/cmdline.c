@@ -39,6 +39,7 @@ static void remove_flag(char *cmd, const char *flag)
 }
 
 static void remove_safetynet_flags(char *cmd)
+<<<<<<< HEAD
 {
 <<<<<<< HEAD
 =======
@@ -62,27 +63,24 @@ static int __init proc_cmdline_init(void)
 >>>>>>> a708b90... proc: Remove additional SafetyNet flags from /proc/cmdline
 =======
 	char *offset_addr, *cmd = new_command_line;
+=======
+{
+	remove_flag(cmd, "androidboot.enable_dm_verity=");
+	remove_flag(cmd, "androidboot.secboot=");
+	remove_flag(cmd, "androidboot.verifiedbootstate=");
+	remove_flag(cmd, "androidboot.veritymode=");
+}
+>>>>>>> a708b90... proc: Remove additional SafetyNet flags from /proc/cmdline
 
-	strcpy(cmd, saved_command_line);
+static int __init proc_cmdline_init(void)
+{
+	strcpy(new_command_line, saved_command_line);
 
 	/*
-	 * Remove 'androidboot.verifiedbootstate' flag from command line seen
-	 * by userspace in order to pass SafetyNet CTS check.
+	 * Remove various flags from command line seen by userspace in order to
+	 * pass SafetyNet CTS check.
 	 */
-	offset_addr = strstr(cmd, "androidboot.verifiedbootstate=");
-	if (offset_addr) {
-		size_t i, len, offset;
-
-		len = strlen(cmd);
-		offset = offset_addr - cmd;
-
-		for (i = 1; i < (len - offset); i++) {
-			if (cmd[offset + i] == ' ')
-				break;
-		}
-
-		memmove(offset_addr, &cmd[offset + i + 1], len - i - offset);
-	}
+	remove_safetynet_flags(new_command_line);
 
 >>>>>>> 3e3d6f4... proc: Remove verifiedbootstate flag from /proc/cmdline
 	proc_create("cmdline", 0, NULL, &cmdline_proc_fops);
